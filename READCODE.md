@@ -1,48 +1,33 @@
 <h1>Code Breakdown</h1>
 
-<p>This page should cover all the steps that were taken to create the JWT with PERN web application. Code snippets will be shown and explained, along with screenshots of how the database looks on PostgreSQL, analyzing how the database connects to the website in the localhost, and how JWT was used to implement authentication.</p>
+<p>This page should cover all the steps that were taken to create the MyMovieList web application. Code snippets will be shown and explained, along with screenshots of how the database on PostgreSQL was used with different tables, analyzing how the database connects to the website in the localhost, and how users have their own lists with help of JWT.</p>
 
 <h2>Server</h2>
 
-<h3>(Server) index.js:</h3>
+<h3>Database</h3>
 
 <p>
-express and app: Importing the Express framework and creating an instance of the application.
-cors: Importing the CORS middleware to handle cross-origin requests.
-pool: Importing the database connection from ./db.
-Middleware:
-express.json(): Middleware to parse incoming JSON requests.
-cors(): Middleware to enable CORS, allowing the frontend to make requests to this backend from different origins.
-Routes:
-/auth: Mounting the JWT authentication routes from ./routes/jwtAuth.
-/dashboard: Mounting the dashboard routes from ./routes/dashboard.
-Server Start:
-app.listen(5000, ...): Starting the Express server on port 5000 and logging a message to the console when the server starts.
+The website uses one database with three tables. The tables are called 'users', 'available_movies' and 'movies'. 
 </p>
 
-<h3>db.js</h3>
-
-<p>
-Pool: Importing the Pool class from the pg module, which is used to create a pool of database connections.
-pool: Creating a new instance of the Pool class with the following configurations:
-user: The username to connect to the PostgreSQL database.
-password: The password for the PostgreSQL user.
-host: The hostname or IP address of the PostgreSQL server (in this case, it's localhost).
-port: The port number on which the PostgreSQL server is running (default is 5432).
-database: The name of the PostgreSQL database to connect to (in this case, it's "jwt").
-module.exports: Exporting the pool instance so that it can be imported and used in other files, such as your main application file (app.js) or any route handlers that require database access.
+<p align="center">
+  <kbd><img src="https://i.imgur.com/im6rlKP.png" alt="AddingItem"></kbd>
 </p>
 
+<p>The role of the 'users' table is to store the account of users of the website, saving their unique passwords while encrypting them inside the database, along with their user_id. The information that is stored unchanged are 'user_name' and 'user_email', which are used for logging in and registering. This step is essential for the functionality of the website as each user must have their own movie list, and may only access their own MyMovieList account.</p>
 
+<p align="center">
+  <kbd><img src="https://i.imgur.com/j0UWyIB.png" alt="AddingItem"></kbd>
+</p>
 
-<h3>jwtAuth.js</h3>
+<p>The role of the 'available_movies' table is to have all the possible movies the user can add to their movie list. I had the idea to find movie title datasets in Kaggle and populate the available_movies table with all those titles because I needed a way to impede users from adding just anything to the list. The only thing users should be allowed to add to their lists are existing movies. I knew I could not populate the whole table manually seeing that the dataset had more than 24,000 entries, so I used the command "COPY available_movies (title) FROM '/path/to/movies.csv' DELIMITER ',' CSV;" to copy all the tuples from the dataset to available_movies.
+</p>
 
-<p>
-Router: Creating a new router instance from Express.
-POST "/register": Handling registration of new users.
-POST "/login": Handling user login.
-GET "/is-verify": Verifying if the user is authenticated (authorization middleware is used to check the JWT token).
-module.exports: Exporting the router for use in other files.
+<p align="center">
+  <kbd><img src="https://i.imgur.com/c76cdwa.png" alt="AddingItem"></kbd>
+</p>
+
+<p>The last table I had to create and the most crucial to the idea of the website was the 'movies' table. This table stores the movie title selected from the 'available_movies' table, the rating the user gave to said movie, and the user_id of the user that selection belong to. This is the table that connects 'users' and 'available_movies', making everything possible.
 </p>
 
 <h3>authorization.js</h3>
