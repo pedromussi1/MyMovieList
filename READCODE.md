@@ -30,30 +30,27 @@ The website uses one database with three tables. The tables are called 'users', 
 <p>The last table I had to create and the most crucial to the idea of the website was the 'movies' table. This table stores the movie title selected from the 'available_movies' table, the rating the user gave to said movie, and the user_id of the user that selection belong to. This is the table that connects 'users' and 'available_movies', making everything possible.
 </p>
 
-<h3>authorization.js</h3>
+<h3>index.js</h3>
 
 <p>
-jwt: Importing the jsonwebtoken module.
-dotenv: Importing and configuring dotenv to use environment variables.
-module.exports: Exporting the middleware function to be used in other files.
-req.header("token"): Extracting the JWT token from the "token" header of the request.
-jwt.verify: Verifying the JWT token using the secret key stored in process.env.jwtSecret.
-req.user: Storing the payload (user information) from the JWT token in req.user for use in subsequent middleware or routes.
-next(): Calling the next middleware or route handler in the Express request-response cycle.
-Error Handling: If the token is invalid or there's an error during verification, returning a "Not Authorized" error response with a 403 status code.
+This code sets up an Express.js server with middleware for parsing JSON requests and enabling CORS. It imports and mounts several route handlers: jwtAuthRouter for handling authentication under /auth, dashboardRouter for user-specific operations under /dashboard, and movieRoutesRouter and suggestionsRouter for managing movie-related routes and suggestions, also under /dashboard. By organizing routes this way, the application maintains clear separation of concerns and modularity. The server listens on port 5001, ready to handle incoming requests.
 </p>
 
-<h3>(Server) dashboard.js</h3>
+<h3>suggestions.js</h3>
 
 <p>
-Router: Creating a new router instance from Express.
-GET "/": Handling the route to fetch user information.
-authorization: Middleware to check if the user is authorized (i.e., if the JWT token is valid).
-req.user: Contains the payload from the JWT token after authorization.
-pool.query: Querying the database to fetch the user's name based on the user_id stored in req.user.
-res.json: Sending the user's name as a JSON response.
-module.exports: Exporting the router for use in other files.
+This code defines a route in an Express.js application for fetching movie title suggestions based on a user's search query. It uses a PostgreSQL database to store available movie titles and performs a case-insensitive search to match the query against the titles in the database. The route handler retrieves the query from the request, converts it to lowercase, and executes a parameterized SQL query to find matching titles using the LIKE operator. The results are then extracted and sent back as a JSON response. Error handling is implemented to log any issues and return a 500 status code if an error occurs. The router is exported for integration into the main application.
 </p>
+
+<h3>movieRoutes.js</h3>
+
+<p>
+This code defines a set of RESTful API endpoints for managing a user's movie list within an Express.js application, using PostgreSQL for database interactions and JWT for authentication. It includes routes to get all movies (GET /), add a new movie (POST /), update an existing movie (PUT /:id), and delete a movie (DELETE /:id), each protected by an authorization middleware to ensure only authenticated users can perform these actions. The database queries are parameterized to prevent SQL injection, and error handling is implemented to log errors and respond with a 500 status code in case of server issues. This setup ensures secure and efficient management of user-specific movie data.
+</p>
+
+<h3>dashboard.js</h3>
+
+<p>This code sets up an Express.js router to handle user-related and movie-related API endpoints, utilizing PostgreSQL for database operations and JWT for user authentication. The main route (GET /) retrieves the authenticated user's name from the database using their user ID, which is extracted from the JWT payload by an authorization middleware. If the query is successful, it returns the user's name; otherwise, it logs the error and responds with a 500 status code. Additionally, the router integrates another set of routes (/movies) from a separate movieRoutes module, effectively modularizing the application and keeping the user-specific and movie-specific routes organized and maintainable.</p>
 
 <h2>Client</h2>
 
