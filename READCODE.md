@@ -54,138 +54,61 @@ This code defines a set of RESTful API endpoints for managing a user's movie lis
 
 <h2>Client</h2>
 
-<h3>(Client) index.js</h3>
+<h3>Dashboard.js</h3>
 
 <p>
-React: Importing the main React library.
-ReactDOM: Importing the ReactDOM library, which is used to render React components to the DOM.
-'./index.css': Importing the CSS file for styling.
-App: Importing the main App component of the application.
-ReactDOM.createRoot(document.getElementById('root')): Creating a new React root with the root DOM element, which is an asynchronous API to render React components.
-root.render: Rendering the App component inside the React root. The <React.StrictMode> wraps the App component to enable React's strict mode, which helps identify potential problems in the application's code.
+This React component, Dashboard, serves as the user interface for authenticated users, displaying a personalized welcome message and providing logout functionality. It utilizes React hooks to manage state (useState) and side effects (useEffect). The getName function fetches the authenticated user's name from the server using a token stored in localStorage, while the logout function handles user logout by removing the token and updating the authentication state. The component's structure includes a header with a welcome message and logout button, and it integrates a Movie component to manage and display the user's movies, ensuring a cohesive and interactive user experience. The Dashboard component encapsulates its elements within a Fragment, ensuring that adjacent JSX elements are rendered without an additional DOM node. This avoids unnecessary div wrappers and helps maintain a cleaner and more concise JSX structure. By utilizing Fragment, the component efficiently organizes its content while enhancing readability and minimizing the impact on the rendered output.
 </p>
 
-<h3>App.js</h3>
+<h3>Movie.js</h3>
 
 <p>
-useState: Declaring a state variable isAuthenticated to track whether the user is authenticated or not.
-setAuth: A function to update the isAuthenticated state variable.
-isAuth: An asynchronous function to check if the user is authenticated by sending a request to the server with the JWT token stored in localStorage.
-useEffect: Using useEffect to call the isAuth function when the component mounts.
-Router and Routes: Using BrowserRouter, Routes, and Route from react-router-dom to set up the application's routing.
-Routes: Defining the application's routes:
-/ and /login: Display the Login component if the user is not authenticated, otherwise navigate to /dashboard.
-/register: Display the Register component if the user is not authenticated, otherwise navigate to /login.
-/dashboard: Display the Dashboard component if the user is authenticated, otherwise navigate to /login.
-Navigate: Using Navigate from react-router-dom to navigate to different routes based on the authentication status.
-toast.configure(): Configuring toast notifications to be used throughout the application.
-</p>
+The Movie component is a crucial part of the user interface in the MyMovieList application, responsible for managing the user's movie list. It leverages React's functional components and hooks to efficiently handle state management and side effects. Upon initialization, the component initializes several state variables using the useState hook, including movies, title, rating, editId, newMovieRating, suggestions, and selectedSuggestion. These variables manage the list of movies, the title and rating of a new movie being added, the ID of the movie being edited, the rating of a new movie, suggestions for movie titles based on user input, and the selected suggestion respectively.
 
-<h3>Register.js</h3>
+To populate the movies state with the user's movie list, the component utilizes the useEffect hook, which runs once when the component mounts. Inside this hook, the getMovies function is called, which sends a GET request to the backend server to retrieve the user's movies. Upon receiving the response, the movie data is parsed and stored in the movies state.
 
-<p>
-useState: Initializing state to store form input values (email, password, name).
-onChange: Function to update the state with the current form input values as the user types.
-onSubmitForm: Function to handle form submission:
-Prepares the request body with form input values.
-Sends a POST request to the registration endpoint (http://localhost:5000/auth/register).
-Parses the response from the server.
-If registration is successful, it stores the JWT token in localStorage, sets the authentication status to true, and displays a success toast message.
-If registration fails, it sets the authentication status to false and displays an error toast message.
-Form: Renders a form with input fields for email, password, and name, and a submit button to register.
-Link: Provides a link to navigate to the Login page.
-setAuth: A function passed as a prop from the parent component to update the authentication status in the parent component's state.
-</p>
+For adding new movies, the component provides an interface with an autosuggest input field for the movie title and a separate input field for the movie rating. The autosuggest feature is implemented using the react-autosuggest library, allowing users to efficiently search for movie titles as they type. Suggestions for movie titles are fetched from the backend server using the getSuggestions function, which sends a GET request with the user's input as the query parameter. The suggestions are then displayed in a dropdown menu below the input field.
 
-<h3>(Client) Dashboard.js</h3>
+Once the user selects a movie title from the suggestions or finishes typing the title, it is stored in the title state variable. Similarly, the user-entered or selected rating is stored in the newMovieRating state variable. When the user clicks the "Add Movie" button, the addMovie function is called, which sends a POST request to the backend server to add the new movie to the user's list. Before adding the movie, the function checks for duplicate titles in the existing movie list to prevent redundancy.
 
-<p>
-useState: Initializing state to store the user name.
-getName: Asynchronous function to fetch the user name from the server:
-Sends a GET request to the dashboard endpoint (http://localhost:5000/dashboard/).
-Includes the JWT token from localStorage in the request headers.
-Parses the response and sets the user name in the state.
-logout: Function to handle logout:
-Removes the JWT token from localStorage.
-Sets the authentication status to false.
-Displays a logout success toast message.
-useEffect: Hook that runs the getName function when the component mounts to fetch and display the user name.
-Dashboard: Renders the dashboard title with the user name and a logout button.
-</p>
+For editing movies, each movie in the list is rendered with options to edit and delete. Clicking the "Edit" button allows the user to modify the movie's rating. When the user clicks the "Save" button after editing, the editMovie function is called, which sends a PUT request to the backend server to update the movie's rating. The function also performs validation to ensure that the rating is within the valid range of 1 to 5.
 
-<h3>Login</h3>
-
-<p>
-useState: Initializing state to store form input values (email, password).
-onChange: Function to update the state with the current form input values as the user types.
-onSubmitForm: Function to handle form submission:
-Prepares the request body with form input values.
-Sends a POST request to the login endpoint (http://localhost:5000/auth/login).
-Parses the response from the server.
-If login is successful, it stores the JWT token in localStorage, sets the authentication status to true, and displays a success toast message.
-If login fails, it sets the authentication status to false and displays an error toast message.
-Form: Renders a form with input fields for email and password, and a submit button to login.
-Link: Provides a link to navigate to the Register page.
-setAuth: A function passed as a prop from the parent component to update the authentication status in the parent component's state.
+Lastly, for deleting movies, clicking the "Delete" button triggers the deleteMovie function, which sends a DELETE request to the backend server to remove the movie from the user's list. Upon successful deletion, the movie is removed from the UI, providing immediate feedback to the user. Throughout the component, error handling is implemented to catch and log any errors that occur during API requests, ensuring robustness and reliability in the user experience.
 </p>
 
 <hr>
 
-### <h3>(Server) index.js</h3>
+### <h3>index.js</h3>
 
 <details>
 <summary>Click to expand code</summary>
 
 ```js
 
-// Importing required modules
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const pool = require("./db");  // Importing the database connection
+const pool = require("./db");
 
 // Middleware
-app.use(express.json());  // Middleware to parse JSON requests
-app.use(cors());  // Middleware to enable CORS (Cross-Origin Resource Sharing)
+app.use(express.json());
+app.use(cors());
 
-// Routes
+// Import route handlers
+const jwtAuthRouter = require("./routes/jwtAuth");
+const dashboardRouter = require("./routes/dashboard");
+const movieRoutesRouter = require("./routes/movieRoutes");
+const suggestionsRouter = require("./routes/suggestions"); // Import the suggestions router
 
-// Authentication routes for registering and logging in users
-app.use("/auth", require("./routes/jwtAuth"));
+// Mount route handlers
+app.use("/auth", jwtAuthRouter);
+app.use("/dashboard", dashboardRouter);
+app.use("/dashboard", movieRoutesRouter);
+app.use("/dashboard", suggestionsRouter); // Mount the suggestions router under the '/dashboard' path
 
-// Dashboard route to access user dashboard
-app.use("/dashboard", require("./routes/dashboard"));
-
-// Start the server
-app.listen(5000, () => {
-    console.log("Server is running on port 5000");  // Logging a message when the server starts
+app.listen(5001, () => {
+    console.log("Server is running on port 5001");
 });
-
-```
-</details>
-
-<hr>
-
-### <h3>db.js</h3>
-
-<details>
-<summary>Click to expand code</summary>
-
-```js
-
-const Pool = require("pg").Pool;  // Importing the Pool class from the 'pg' module
-
-// Creating a new Pool instance with database connection configurations
-const pool = new Pool({
-    user: "postgres",       // Database user
-    password: "1234",       // Database password
-    host: "localhost",      // Database host
-    port: 5432,             // Database port
-    database: "jwt"         // Database name
-});
-
-// Exporting the pool instance to be used in other files
-module.exports = pool;
 
 
 ```
@@ -193,183 +116,146 @@ module.exports = pool;
 
 <hr>
 
-### <h3>App.js</h3>
+### <h3>suggestions.js</h3>
 
 <details>
 <summary>Click to expand code</summary>
 
 ```js
 
-import React, { Fragment, useState, useEffect } from 'react';
-import './App.css';
+// Import necessary modules
+const express = require('express');
+const router = express.Router();
+const pool = require('../db'); // Assuming you have a pool for database connections
 
-import { toast } from 'react-toastify';  // Importing toast notifications
-import 'react-toastify/dist/ReactToastify.css';
+// Route handler for fetching movie title suggestions
+router.get('/movies/suggestions', async (req, res) => {
+  try {
+    // Get the search query from the request query parameters
+    const query = req.query.query.toLowerCase(); // Convert to lowercase for case-insensitive search
 
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";  // Importing routing components
+    // Query the available_movies table for movie titles matching the search query
+    const response = await pool.query(
+      `SELECT title FROM available_movies WHERE LOWER(title) LIKE $1`,
+      [`%${query}%`] // Use LIKE operator for substring search
+    );
 
-// Components
-import Dashboard from "./components/Dashboard";
-import Login from "./components/Login";
-import Register from "./components/Register";
+    // Extract movie titles from the database response
+    const suggestions = response.rows.map((row) => row.title);
 
-toast.configure();  // Configuring toast notifications
-
-function App() {
-
-  const [isAuthenticated, setIsAuthenticated] = useState(false);  // State to track authentication status
-
-  // Function to set authentication status
-  const setAuth = (boolean) => {
-    setIsAuthenticated(boolean);
-  };
-
-  // Function to check if user is authenticated
-  async function isAuth() {
-    try {
-      const response = await fetch("http://localhost:5000/auth/is-verify", {
-        method: "GET",
-        headers: { token: localStorage.token }  // Sending the JWT token stored in localStorage
-      });
-
-      const parseRes = await response.json();
-
-      // Setting isAuthenticated based on the response
-      parseRes === true ? setIsAuthenticated(true) : setIsAuthenticated(false);
-    } catch (err) {
-      console.error(err.message);
-    }
+    // Send the list of movie title suggestions as JSON response
+    res.json(suggestions);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
   }
+});
 
-  useEffect(() => {
-    isAuth();  // Calling isAuth function when the component mounts
-  });
-
-  return (
-    <Fragment>
-      <Router>
-        <div className="container">
-          <Routes>
-            {/* Route to display Login component if not authenticated, otherwise navigate to Dashboard */}
-            <Route exact path="/" element={!isAuthenticated ? <Login setAuth={setAuth} /> : <Navigate to="/dashboard" />} />
-            
-            {/* Route to display Login component if not authenticated, otherwise navigate to Dashboard */}
-            <Route exact path="/login" element={!isAuthenticated ? <Login setAuth={setAuth} /> : <Navigate to="/dashboard" />} />
-            
-            {/* Route to display Register component if not authenticated, otherwise navigate to Login */}
-            <Route exact path="/register" element={!isAuthenticated ? <Register setAuth={setAuth} /> : <Navigate to="/login" />} />
-            
-            {/* Route to display Dashboard component if authenticated, otherwise navigate to Login */}
-            <Route exact path="/dashboard" element={isAuthenticated ? <Dashboard setAuth={setAuth} /> : <Navigate to="/login" />} />
-          </Routes>
-        </div>
-      </Router>
-    </Fragment>
-  );
-}
-
-export default App;
-
+// Export the router to use in the main application
+module.exports = router;
 
 ```
 </details>
 
 <hr>
 
-### <h3>jwtAuth.js</h3>
+### <h3>movieRoutes.js</h3>
 
 <details>
 <summary>Click to expand code</summary>
 
 ```js
 
-const router = require("express").Router();  // Importing the Router module from Express
-const pool = require("../db");  // Importing the database connection
-const bcrypt = require("bcrypt");  // Importing bcrypt for password hashing
-const jwtGenerator = require("../utils/jwtGenerator");  // Importing the JWT token generator
-const validInfo = require("../middleware/validInfo");  // Importing middleware for input validation
-const authorization = require("../middleware/authorization");  // Importing middleware for authorization
+const router = require("express").Router();
+const pool = require("../db");
+const authorization = require("../middleware/authorization");
 
-// Registering a new user
-router.post("/register", validInfo, async(req, res) => {
-    try {
-        // Destructure the request body (name, email, password)
-        const { name, email, password} = req.body;
+// Get all movies for a user
+router.get("/", authorization, async (req, res) => {
+  try {
+    const user_id = req.user;
 
-        // Check if user exists (if user exists, throw error)
-        const user = await pool.query("SELECT * FROM users WHERE user_email = $1", [email]);
-        if(user.rows.length != 0){
-            return res.status(401).json("User already exists");
-        }
+    const movies = await pool.query("SELECT * FROM movies WHERE user_id = $1", [
+      user_id,
+    ]);
 
-        // Bcrypt the user password
-        const saltRound = 10;
-        const salt = await bcrypt.genSalt(saltRound);
-        const bcryptPassword = await bcrypt.hash(password, salt);
-
-        // Insert the new user into the database
-        const newUser = await pool.query("INSERT INTO users (user_name, user_email, user_password) VALUES ($1, $2, $3) RETURNING *", [name, email, bcryptPassword]);
-
-        // Generate JWT token
-        const token = jwtGenerator(newUser.rows[0].user_id);
-
-        // Send token as response
-        res.json({token});
-
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send("Server Error");
-    }
+    res.json(movies.rows);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
 });
 
-// Login route
-router.post("/login", validInfo, async(req, res) => {
-    try {
-        // Destructure the request body
-        const {email, password} = req.body;
+// Add a new movie
+router.post("/", authorization, async (req, res) => {
+  try {
+    const { title, rating } = req.body;
+    const user_id = req.user;
 
-        // Check if user doesn't exist
-        const user = await pool.query("SELECT * FROM users WHERE user_email = $1", [email]);
-        if(user.rows.length === 0){
-            return res.status(401).json("Password or Email is incorrect");
-        }
+    const newMovie = await pool.query(
+      "INSERT INTO movies (title, rating, user_id) VALUES ($1, $2, $3) RETURNING *",
+      [title, rating, user_id]
+    );
 
-        // Check if incoming password matches the database password
-        const validPassword =  await bcrypt.compare(password, user.rows[0].user_password);
-        if(!validPassword){
-            return res.status(401).json("Password or Email is incorrect");
-        }
-
-        // Generate JWT token
-        const token = jwtGenerator(user.rows[0].user_id);
-
-        // Send token as response
-        res.json({token});
-
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send("Server Error");
-    }
+    res.json(newMovie.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
 });
 
-// Verify user route
-router.get("/is-verify", authorization, async (req, res) => {
-    try {
-        // Send true if user is verified
-        res.json(true);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send("Server Error");
+// Update a movie
+router.put("/:id", authorization, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, rating } = req.body;
+    const user_id = req.user;
+
+    const updatedMovie = await pool.query(
+      "UPDATE movies SET title = $1, rating = $2 WHERE movie_id = $3 AND user_id = $4 RETURNING *",
+      [title, rating, id, user_id]
+    );
+
+    if (updatedMovie.rows.length === 0) {
+      return res.status(404).json("Movie not found or unauthorized");
     }
+
+    res.json(updatedMovie.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
 });
 
-module.exports = router;  // Exporting the router
+// Delete a movie
+router.delete("/:id", authorization, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user_id = req.user;
 
+    const deletedMovie = await pool.query(
+      "DELETE FROM movies WHERE movie_id = $1 AND user_id = $2 RETURNING *",
+      [id, user_id]
+    );
+
+    if (deletedMovie.rows.length === 0) {
+      return res.status(404).json("Movie not found or unauthorized");
+    }
+
+    res.json("Movie deleted successfully");
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+module.exports = router;
 
 ```
 </details>
 
 <hr>
+
 
 ### <h3>(Server) dashboard.js</h3>
 
@@ -378,27 +264,27 @@ module.exports = router;  // Exporting the router
 
 ```js
 
-const router = require("express").Router();  // Importing the Router module from Express
-const pool = require("../db");  // Importing the database connection
-const authorization = require('../middleware/authorization');  // Importing middleware for authorization
+const router = require("express").Router();
+const pool = require("../db");
+const authorization = require('../middleware/authorization');
 
-// Get user information route
 router.get("/", authorization, async(req, res) => {
     try {
-        // req.user has the payload from the JWT token
-        // Fetch user name from the database based on user_id stored in req.user
+        //req.user has the payload
+        //res.json(req.user);
 
         const user = await pool.query("SELECT user_name FROM users WHERE user_id = $1", [req.user]);
 
-        // Send the user's name as a response
         res.json(user.rows[0]);
     } catch (err) {
-        console.error(err.message);
+        console.error(err.message)
         res.status(500).json("Server Error");
     }
 });
 
-module.exports = router;  // Exporting the router
+router.use("/movies", require("./movieRoutes"));
+
+module.exports = router;
 
 
 ```
@@ -406,293 +292,68 @@ module.exports = router;  // Exporting the router
 
 <hr>
 
-### <h3>authorization.js</h3>
+### <h3>(client)Dashboard.js</h3>
 
 <details>
 <summary>Click to expand code</summary>
 
 ```js
 
-const jwt = require("jsonwebtoken");  // Importing the jsonwebtoken module
-require("dotenv").config();  // Importing and configuring dotenv for environment variables
+// Dashboard.js
+import React, { Fragment, useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
+import Movie from './Movie';
 
-module.exports = async(req, res, next) => {
+const Dashboard = ({ setAuth }) => {
+  const [name, setName] = useState('');
+
+  const getName = async () => {
     try {
-        const jwtToken = req.header("token");  // Extracting the JWT token from the request header
-
-        // If no token is found in the header, return an error response
-        if(!jwtToken){
-            return res.status(403).json("Not Authorized");
-        }
-
-        // Verifying the JWT token using the secret key from environment variables
-        const payload = jwt.verify(jwtToken, process.env.jwtSecret);
-
-        // Storing the payload (user information) in req.user for use in subsequent middleware or routes
-        req.user = payload.user;
-
-        // Calling the next middleware or route handler
-        next();
-
+      const response = await fetch('http://localhost:5001/dashboard/', {
+        method: 'GET',
+        headers: { token: localStorage.token },
+      });
+      const parseRes = await response.json();
+      setName(parseRes.user_name);
     } catch (err) {
-        // If the token is invalid or there's an error, return an error response
-        return res.status(403).json("Not Authorized");
+      console.error(err.message);
     }
-};
+  };
 
+  const logout = (e) => {
+    e.preventDefault();
+    localStorage.removeItem('token');
+    setAuth(false);
+    toast.success('Logged out successfully!');
+  };
 
-```
-</details>
+  useEffect(() => {
+    getName();
+  }, []);
 
-<hr>
-
-### <h3>Register.js</h3>
-
-<details>
-<summary>Click to expand code</summary>
-
-```js
-
-import React, {Fragment, useState} from "react";
-import {Link} from "react-router-dom";
-import {toast} from "react-toastify";
-
-const Register = ({setAuth}) => {
-
-    // State to store form input values
-    const [inputs, setInputs] = useState({
-        email: "",
-        password: "",
-        name: ""
-    });
-
-    // Destructuring input values from state
-    const {email, password, name} = inputs;
-
-    // Function to update input values when user types in the form fields
-    const onChange = (e) => {
-        setInputs({...inputs, [e.target.name] : e.target.value});
-    };
-
-    // Function to handle form submission
-    const onSubmitForm =  async (e) => {
-        e.preventDefault();
-
-        try {
-            // Prepare request body
-            const body = {email, password, name};
-            
-            // Send POST request to register endpoint
-            const response = await fetch("http://localhost:5000/auth/register", {
-                method: "POST",
-                headers: {"Content-Type" : "application/json"},
-                body: JSON.stringify(body)
-            });
-
-            // Parse the response
-            const parseRes = await response.json();
-
-            // If registration is successful
-            if(parseRes.token){
-                // Store the token in localStorage
-                localStorage.setItem("token", parseRes.token);
-
-                // Set authentication status to true
-                setAuth(true);
-                
-                // Display success toast message
-                toast.success("Registered Successfully!");
-            }else{
-                // Set authentication status to false
-                setAuth(false);
-                
-                // Display error toast message
-                toast.error(parseRes);
-            }
-
-        } catch (err) {
-            // Log error to console
-            console.error(err.message);
-        }
-    };
-
-    return (
-        <Fragment>
-            <h1 className="text-center my-5">Register</h1>
-            {/* Register form */}
-            <form onSubmit={onSubmitForm}>
-                <input type="email" name="email" placeholder="Email" className="form-control my-3" value={email} onChange={e => onChange(e)}/>
-                <input type="password" name="password" placeholder="Password" className="form-control my-3" value={password} onChange={e => onChange(e)}/>
-                <input type="text" name="name" placeholder="Name" className="form-control my-3" value={name} onChange={e => onChange(e)}/>
-                <button className="btn-success btn-block">Submit</button>
-            </form>
-            {/* Link to Login page */}
-            <Link to="/login">Login</Link>
-        </Fragment>
-    );
-};
-
-export default Register;
-
-
-```
-</details>
-
-<hr>
-
-### <h3>Login.js</h3>
-
-<details>
-<summary>Click to expand code</summary>
-
-```js
-
-import React, {Fragment, useState} from "react";
-import {Link} from "react-router-dom";
-import {toast} from "react-toastify";
-
-const Login = ({setAuth}) => {
-
-    // State to store form input values
-    const [inputs, setInputs] = useState({
-        email: "",
-        password: ""
-    });
-
-    // Destructuring input values from state
-    const {email, password} = inputs;
-
-    // Function to update input values when user types in the form fields
-    const onChange = (e) => {
-        setInputs({...inputs, [e.target.name]: e.target.value});
-    };
-
-    // Function to handle form submission
-    const onSubmitForm = async (e) => {
-        e.preventDefault();
-        try {
-            // Prepare request body
-            const body = {email, password};
-            
-            // Send POST request to login endpoint
-            const response = await fetch("http://localhost:5000/auth/login", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(body)
-            });
-
-            // Parse the response
-            const parseRes = await response.json();
-
-            // If login is successful
-            if(parseRes.token){
-                // Store the token in localStorage
-                localStorage.setItem("token", parseRes.token);
-
-                // Set authentication status to true
-                setAuth(true);
-                
-                // Display success toast message
-                toast.success("Logged in successfully!");
-            }else{
-                // Set authentication status to false
-                setAuth(false);
-                
-                // Display error toast message
-                toast.error(parseRes);
-            }
-
-        } catch (err) {
-            // Log error to console
-            console.error(err.message);
-        }
-    };
-
-    return (
-        <Fragment>
-            {/* Login title */}
-            <h1 className="text-center my-5">Login</h1>
-            {/* Login form */}
-            <form onSubmit={onSubmitForm}>
-                <input type="email" name="email" placeholder="Email" className="form-control my-3" value={email} onChange={e => onChange(e)}/>
-                <input type="password" name="password" placeholder="Password" className="form-control my-3" value={password} onChange={e => onChange(e)}/>
-                <button className="btn btn-success btn-block">Submit</button>
-            </form>
-            {/* Link to Register page */}
-            <Link to="/register">Register</Link>
-        </Fragment>
-    );
-};
-
-export default Login;
-
-
-```
-</details>
-
-<hr>
-
-### <h3>(Client) Dashboard.js</h3>
-
-<details>
-<summary>Click to expand code</summary>
-
-```js
-
-import React, {Fragment, useState, useEffect} from "react";
-import {toast} from "react-toastify";
-
-const Dashboard = ({setAuth}) => {
-
-    // State to store user name
-    const [name, setName] = useState("");
-
-    // Function to fetch user name from the server
-    async function getName(){
-        try {
-            // Fetch user name from the server
-            const response = await fetch("http://localhost:5000/dashboard/", {
-                method : "GET",
-                headers: {token: localStorage.token}
-            });
-
-            // Parse the response
-            const parseRes = await response.json();
-
-            // Set the user name in the state
-            setName(parseRes.user_name);
-        } catch (err) {
-            // Log error to console
-            console.error(err.message);
-        }
-    }
-
-    // Function to handle logout
-    const logout = (e) => {
-        e.preventDefault();
-        // Remove token from localStorage
-        localStorage.removeItem("token");
+  return (
+    <Fragment>
+      <div className="container dashboard-header bg-dark">
         
-        // Set authentication status to false
-        setAuth(false);
-        
-        // Display logout success toast message
-        toast.success("Logged out successfully!");
-    };
-
-    // useEffect to fetch user name when the component mounts
-    useEffect(() =>{
-        getName();
-    }, []);
-
-    return (
-        <Fragment>
-            {/* Dashboard title with user name */}
-            <h1>Dashboard {name}</h1>
-            {/* Logout button */}
-            <button className="btn btn-primary" onClick={e => logout(e)}>Logout</button>
-        </Fragment>
-    );
+          <div className="row">
+            <div className="col">
+              <h1 className="text-light">Welcome {name}!</h1>
+            </div>
+            <div className="col text-right">
+              <button className="btn btn-primary logout-btn" onClick={(e) => logout(e)}>
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      
+      <div className="container">
+        <div className="movies-section">
+          <Movie />
+        </div>
+      </div>
+    </Fragment>
+  );
 };
 
 export default Dashboard;
@@ -703,33 +364,300 @@ export default Dashboard;
 
 <hr>
 
-### <h3>(Client) index.js</h3>
+### <h3>Movie.js</h3>
 
 <details>
 <summary>Click to expand code</summary>
 
 ```js
 
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
+// Movie.js
+import React, { useState, useEffect } from 'react';
+import Autosuggest from 'react-autosuggest';
+import { toast } from 'react-toastify';
 
-// Creating a new React root with the root DOM element
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const Movie = () => {
+  const [movies, setMovies] = useState([]);
+  const [title, setTitle] = useState('');
+  const [rating, setRating] = useState('');
+  const [editId, setEditId] = useState(null);
+  const [newMovieRating, setNewMovieRating] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [selectedSuggestion, setSelectedSuggestion] = useState(null);
 
-// Rendering the App component inside the React root
-root.render(
-  <React.StrictMode>  {/* Enabling React's strict mode */}
-    <App />  {/* Rendering the App component */}
-  </React.StrictMode>
-);
+
+  useEffect(() => {
+    getMovies();
+  }, []);
+
+  const getSuggestions = async (value) => {
+    try {
+      const response = await fetch(`http://localhost:5001/dashboard/movies/suggestions?query=${value}`, {
+        method: 'GET',
+        headers: { token: localStorage.token },
+      });
+      const data = await response.json();
+      setSuggestions(data.slice(0, 5)); // Limit to first 5 suggestions
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+  
+
+  const onChange = (event, { newValue }) => {
+    setTitle(newValue);
+    // Reset selected suggestion when user types
+    setSelectedSuggestion(null);
+  };
+
+  const onSuggestionsFetchRequested = ({ value }) => {
+    getSuggestions(value);
+  };
+
+  const onSuggestionsClearRequested = () => {
+    setSuggestions([]);
+  };
+
+  const renderSuggestion = suggestion => (
+    <div className="suggestion-item">
+      {suggestion}
+    </div>
+  );
+  
+
+  const inputProps = {
+    placeholder: 'Movie Title',
+    value: title,
+    onChange: onChange,
+    className: "form-control"
+  };
+
+  const getSuggestionValue = suggestion => suggestion;
+
+  const getSuggestionsContainer = ({ containerProps, children, query }) => {
+    return (
+      <div {...containerProps} className="suggestions-container">
+        {children}
+      </div>
+    );
+  };
+
+
+  const getMovies = async () => {
+    try {
+      const response = await fetch('http://localhost:5001/dashboard/movies', {
+        method: 'GET',
+        headers: { token: localStorage.token },
+      });
+      const parseRes = await response.json();
+      setMovies(parseRes);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+
+  const onSuggestionSelected = (event, { suggestion }) => {
+    setSelectedSuggestion(suggestion);
+  };
+
+  const addMovie = async () => {
+    try {
+      // Check if any movie with the same title (case-insensitive) already exists in the list
+      const isDuplicate = movies.some((movie) => movie.title.toLowerCase() === title.toLowerCase());
+      if (isDuplicate) {
+        toast.error('A movie with the same title already exists!');
+        return;
+      }
+  
+      const body = { title, rating: newMovieRating };
+      const response = await fetch('http://localhost:5001/dashboard/movies', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          token: localStorage.token,
+        },
+        body: JSON.stringify(body),
+      });
+      const parseRes = await response.json();
+      setMovies([...movies, parseRes]);
+      setTitle('');
+      setNewMovieRating(''); // Reset newMovieRating state
+      setSelectedSuggestion(null);
+      toast.success('Movie added successfully!');
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+  
+  
+
+  const editMovie = async (id) => {
+    try {
+
+      if (rating < 1 || rating > 5) {
+        toast.error('Rating must be between 1 and 5.');
+        return;
+      }
+      
+      const body = { rating };
+      await fetch(`http://localhost:5001/dashboard/movies/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          token: localStorage.token,
+        },
+        body: JSON.stringify(body),
+      });
+      const updatedMovies = movies.map((movie) =>
+        movie.movie_id === id ? { ...movie, rating } : movie
+      );
+      setMovies(updatedMovies);
+      setEditId(null);
+      toast.success('Movie rating updated successfully!');
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  const deleteMovie = async (id) => {
+    try {
+      await fetch(`http://localhost:5001/dashboard/movies/${id}`, {
+        method: 'DELETE',
+        headers: { token: localStorage.token },
+      });
+      setMovies(movies.filter((movie) => movie.movie_id !== id));
+      toast.success('Movie deleted successfully!');
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  const renderStars = (rating) => {
+    const filledStars = '★'.repeat(rating);
+    const emptyStars = '☆'.repeat(5 - rating);
+    return (
+      <div>
+        {filledStars}
+        {emptyStars}
+      </div>
+    );
+  };
+
+  const handleEdit = (id) => {
+    setEditId(id);
+    const movieToEdit = movies.find((movie) => movie.movie_id === id);
+    setRating(movieToEdit.rating);
+  };
+
+  return (
+    <div className="movie-list">
+      {/* <h2>Movie List</h2> */}
+      <table className="table table-dark">
+        <thead>
+          <tr className="bg-primary">
+            <th scope="col">Title</th>
+            <th scope="col">Rating</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {movies.map((movie) => (
+            <tr key={movie.movie_id}>
+              <td>{movie.title}</td>
+              <td>
+              {editId === movie.movie_id ? (
+                  <input
+                    type="number"
+                    value={rating}
+                    onChange={(e) => {
+                      const rating = parseInt(e.target.value);
+                      if (!isNaN(rating)) {
+                        setRating(Math.min(Math.max(rating, 1), 5));
+                      } else {
+                        setRating('');
+                      }
+                    }}
+                    className="form-control"
+                  />
+                ) : (
+                  <div onClick={() => handleEdit(movie.movie_id)}>
+                    {renderStars(movie.rating)}
+                  </div>
+                )}
+              </td>
+              <td>
+                {editId === movie.movie_id ? (
+                  <button
+                    className="btn btn-success mr-2"
+                    onClick={() => editMovie(movie.movie_id)}
+                  >
+                    Save
+                  </button>
+                ) : (
+                  <button
+                    className="btn btn-warning mr-2"
+                    onClick={() => {
+                      setRating(movie.rating);
+                      setEditId(movie.movie_id);
+                    }}
+                  >
+                    Edit
+                  </button>
+                )}
+                <button
+                  className="btn btn-danger"
+                  onClick={() => deleteMovie(movie.movie_id)}
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div className="add-movie">
+      <h2>Add New Movie</h2>
+        <Autosuggest
+          suggestions={suggestions}
+          onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+          onSuggestionsClearRequested={onSuggestionsClearRequested}
+          getSuggestionValue={getSuggestionValue}
+          renderSuggestion={renderSuggestion}
+          inputProps={inputProps}
+          onSuggestionSelected={onSuggestionSelected}
+          suggestionsContainer={getSuggestionsContainer}
+        />
+        <input
+          type="number"
+          placeholder="Rating"
+          value={newMovieRating}
+          onChange={(e) => {
+            const rating = parseInt(e.target.value);
+            if (!isNaN(rating)) {
+              setNewMovieRating(Math.min(Math.max(rating, 1), 5));
+            } else {
+              setNewMovieRating('');
+            }
+          }}
+          className="form-control"
+        />
+        <button className="btn btn-primary mt-3" onClick={addMovie} disabled={!selectedSuggestion}>
+          Add Movie
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default Movie;
 
 
 ```
 </details>
 
 <hr>
+
 
 
 
