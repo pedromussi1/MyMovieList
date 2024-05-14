@@ -374,7 +374,19 @@ export default Dashboard;
 // Movie.js
 import React, { useState, useEffect } from 'react';
 import Autosuggest from 'react-autosuggest';
-import { toast } from 'react-toastify';
+// import { toast } from 'react-toastify';
+import addMovie from './AddMovie'; // Import the addMovie function
+import editMovie from './EditMovie'; // Import the editMovie function
+import deleteMovie from './DeleteMovie'; // Import the deleteMovie function
+import renderStars from './renderStars'; // Import the renderStars function
+import {
+  onChange,
+  onSuggestionsFetchRequested,
+  onSuggestionsClearRequested,
+  renderSuggestion,
+  getSuggestionValue,
+  getSuggestionsContainer
+} from './suggestions'; // Import suggestion functions
 
 const Movie = () => {
   const [movies, setMovies] = useState([]);
@@ -385,63 +397,9 @@ const Movie = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
 
-
   useEffect(() => {
     getMovies();
   }, []);
-
-  const getSuggestions = async (value) => {
-    try {
-      const response = await fetch(`http://localhost:5001/dashboard/movies/suggestions?query=${value}`, {
-        method: 'GET',
-        headers: { token: localStorage.token },
-      });
-      const data = await response.json();
-      setSuggestions(data.slice(0, 5)); // Limit to first 5 suggestions
-    } catch (err) {
-      console.error(err.message);
-    }
-  };
-  
-
-  const onChange = (event, { newValue }) => {
-    setTitle(newValue);
-    // Reset selected suggestion when user types
-    setSelectedSuggestion(null);
-  };
-
-  const onSuggestionsFetchRequested = ({ value }) => {
-    getSuggestions(value);
-  };
-
-  const onSuggestionsClearRequested = () => {
-    setSuggestions([]);
-  };
-
-  const renderSuggestion = suggestion => (
-    <div className="suggestion-item">
-      {suggestion}
-    </div>
-  );
-  
-
-  const inputProps = {
-    placeholder: 'Movie Title',
-    value: title,
-    onChange: onChange,
-    className: "form-control"
-  };
-
-  const getSuggestionValue = suggestion => suggestion;
-
-  const getSuggestionsContainer = ({ containerProps, children, query }) => {
-    return (
-      <div {...containerProps} className="suggestions-container">
-        {children}
-      </div>
-    );
-  };
-
 
   const getMovies = async () => {
     try {
@@ -456,94 +414,6 @@ const Movie = () => {
     }
   };
 
-
-  const onSuggestionSelected = (event, { suggestion }) => {
-    setSelectedSuggestion(suggestion);
-  };
-
-  const addMovie = async () => {
-    try {
-      // Check if any movie with the same title (case-insensitive) already exists in the list
-      const isDuplicate = movies.some((movie) => movie.title.toLowerCase() === title.toLowerCase());
-      if (isDuplicate) {
-        toast.error('A movie with the same title already exists!');
-        return;
-      }
-  
-      const body = { title, rating: newMovieRating };
-      const response = await fetch('http://localhost:5001/dashboard/movies', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          token: localStorage.token,
-        },
-        body: JSON.stringify(body),
-      });
-      const parseRes = await response.json();
-      setMovies([...movies, parseRes]);
-      setTitle('');
-      setNewMovieRating(''); // Reset newMovieRating state
-      setSelectedSuggestion(null);
-      toast.success('Movie added successfully!');
-    } catch (err) {
-      console.error(err.message);
-    }
-  };
-  
-  
-
-  const editMovie = async (id) => {
-    try {
-
-      if (rating < 1 || rating > 5) {
-        toast.error('Rating must be between 1 and 5.');
-        return;
-      }
-      
-      const body = { rating };
-      await fetch(`http://localhost:5001/dashboard/movies/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          token: localStorage.token,
-        },
-        body: JSON.stringify(body),
-      });
-      const updatedMovies = movies.map((movie) =>
-        movie.movie_id === id ? { ...movie, rating } : movie
-      );
-      setMovies(updatedMovies);
-      setEditId(null);
-      toast.success('Movie rating updated successfully!');
-    } catch (err) {
-      console.error(err.message);
-    }
-  };
-
-  const deleteMovie = async (id) => {
-    try {
-      await fetch(`http://localhost:5001/dashboard/movies/${id}`, {
-        method: 'DELETE',
-        headers: { token: localStorage.token },
-      });
-      setMovies(movies.filter((movie) => movie.movie_id !== id));
-      toast.success('Movie deleted successfully!');
-    } catch (err) {
-      console.error(err.message);
-    }
-  };
-
-  const renderStars = (rating) => {
-    const filledStars = '★'.repeat(rating);
-    const emptyStars = '☆'.repeat(5 - rating);
-    return (
-      <div>
-        {filledStars}
-        {emptyStars}
-      </div>
-    );
-  };
-
   const handleEdit = (id) => {
     setEditId(id);
     const movieToEdit = movies.find((movie) => movie.movie_id === id);
@@ -552,7 +422,6 @@ const Movie = () => {
 
   return (
     <div className="movie-list">
-      {/* <h2>Movie List</h2> */}
       <table className="table table-dark">
         <thead>
           <tr className="bg-primary">
@@ -566,7 +435,7 @@ const Movie = () => {
             <tr key={movie.movie_id}>
               <td>{movie.title}</td>
               <td>
-              {editId === movie.movie_id ? (
+                {editId === movie.movie_id ? (
                   <input
                     type="number"
                     value={rating}
@@ -590,7 +459,7 @@ const Movie = () => {
                 {editId === movie.movie_id ? (
                   <button
                     className="btn btn-success mr-2"
-                    onClick={() => editMovie(movie.movie_id)}
+                    onClick={() => editMovie(movie.movie_id, rating, movies, setMovies, setEditId)}
                   >
                     Save
                   </button>
@@ -607,7 +476,7 @@ const Movie = () => {
                 )}
                 <button
                   className="btn btn-danger"
-                  onClick={() => deleteMovie(movie.movie_id)}
+                  onClick={() => deleteMovie(movie.movie_id, movies, setMovies)}
                 >
                   Delete
                 </button>
@@ -617,15 +486,20 @@ const Movie = () => {
         </tbody>
       </table>
       <div className="add-movie">
-      <h2>Add New Movie</h2>
+        <h2>Add New Movie</h2>
         <Autosuggest
           suggestions={suggestions}
-          onSuggestionsFetchRequested={onSuggestionsFetchRequested}
-          onSuggestionsClearRequested={onSuggestionsClearRequested}
+          onSuggestionsFetchRequested={(value) => onSuggestionsFetchRequested(value, setSuggestions)}
+          onSuggestionsClearRequested={() => onSuggestionsClearRequested(setSuggestions)}
           getSuggestionValue={getSuggestionValue}
           renderSuggestion={renderSuggestion}
-          inputProps={inputProps}
-          onSuggestionSelected={onSuggestionSelected}
+          inputProps={{
+            placeholder: 'Movie Title',
+            value: title,
+            onChange: (event, { newValue }) => onChange(event, { newValue }, setTitle, setSelectedSuggestion),
+            className: "form-control"
+          }}
+          onSuggestionSelected={(event, { suggestion }) => setSelectedSuggestion(suggestion)}
           suggestionsContainer={getSuggestionsContainer}
         />
         <input
@@ -642,7 +516,11 @@ const Movie = () => {
           }}
           className="form-control"
         />
-        <button className="btn btn-primary mt-3" onClick={addMovie} disabled={!selectedSuggestion}>
+        <button
+          className="btn btn-primary mt-3"
+          onClick={() => addMovie(title, newMovieRating, movies, setMovies, setTitle, setNewMovieRating, setSelectedSuggestion)}
+          disabled={!selectedSuggestion}
+        >
           Add Movie
         </button>
       </div>
@@ -658,7 +536,211 @@ export default Movie;
 
 <hr>
 
+### <h3>AddMovie.js</h3>
+
+<details>
+<summary>Click to expand code</summary>
+
+```js
+
+// addMovie.js
+import { toast } from 'react-toastify';
+
+const addMovie = async (title, newMovieRating, movies, setMovies, setTitle, setNewMovieRating, setSelectedSuggestion) => {
+  try {
+    // Check if any movie with the same title (case-insensitive) already exists in the list
+    const isDuplicate = movies.some((movie) => movie.title.toLowerCase() === title.toLowerCase());
+    if (isDuplicate) {
+      toast.error('A movie with the same title already exists!');
+      return;
+    }
+
+    const body = { title, rating: newMovieRating };
+    const response = await fetch('http://localhost:5001/dashboard/movies', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        token: localStorage.token,
+      },
+      body: JSON.stringify(body),
+    });
+    const parseRes = await response.json();
+    setMovies([...movies, parseRes]);
+    setTitle('');
+    setNewMovieRating(''); // Reset newMovieRating state
+    setSelectedSuggestion(null);
+    toast.success('Movie added successfully!');
+  } catch (err) {
+    console.error(err.message);
+  }
+};
+
+export default addMovie;
 
 
+```
+</details>
+
+<hr>
+
+### <h3>DeleteMovie.js</h3>
+
+<details>
+<summary>Click to expand code</summary>
+
+```js
+
+// deleteMovie.js
+import { toast } from 'react-toastify';
+
+const deleteMovie = async (id, movies, setMovies) => {
+  try {
+    await fetch(`http://localhost:5001/dashboard/movies/${id}`, {
+      method: 'DELETE',
+      headers: { token: localStorage.token },
+    });
+    setMovies(movies.filter((movie) => movie.movie_id !== id));
+    toast.success('Movie deleted successfully!');
+  } catch (err) {
+    console.error(err.message);
+  }
+};
+
+export default deleteMovie;
+
+
+```
+</details>
+
+<hr>
+
+### <h3>EditMovie.js</h3>
+
+<details>
+<summary>Click to expand code</summary>
+
+```js
+
+// editMovie.js
+import { toast } from 'react-toastify';
+
+const editMovie = async (id, rating, movies, setMovies, setEditId) => {
+  try {
+    if (rating < 1 || rating > 5) {
+      toast.error('Rating must be between 1 and 5.');
+      return;
+    }
+
+    const body = { rating };
+    await fetch(`http://localhost:5001/dashboard/movies/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        token: localStorage.token,
+      },
+      body: JSON.stringify(body),
+    });
+    const updatedMovies = movies.map((movie) =>
+      movie.movie_id === id ? { ...movie, rating } : movie
+    );
+    setMovies(updatedMovies);
+    setEditId(null);
+    toast.success('Movie rating updated successfully!');
+  } catch (err) {
+    console.error(err.message);
+  }
+};
+
+export default editMovie;
+
+```
+</details>
+
+<hr>
+
+### <h3>renderStars.js</h3>
+
+<details>
+<summary>Click to expand code</summary>
+
+```js
+
+// renderStars.js
+
+const renderStars = (rating) => {
+    const filledStars = '★'.repeat(rating);
+    const emptyStars = '☆'.repeat(5 - rating);
+    return (
+      <div>
+        {filledStars}
+        {emptyStars}
+      </div>
+    );
+  };
+  
+  export default renderStars;
+  
+```
+</details>
+
+<hr>
+
+### <h3>suggestions.js</h3>
+
+<details>
+<summary>Click to expand code</summary>
+
+```js
+
+// suggestions.js
+import React from 'react';
+
+export const getSuggestions = async (value, setSuggestions) => {
+  try {
+    const response = await fetch(`http://localhost:5001/dashboard/movies/suggestions?query=${value}`, {
+      method: 'GET',
+      headers: { token: localStorage.token },
+    });
+    const data = await response.json();
+    setSuggestions(data.slice(0, 5)); // Limit to first 5 suggestions
+  } catch (err) {
+    console.error(err.message);
+  }
+};
+
+export const onChange = (event, { newValue }, setTitle, setSelectedSuggestion) => {
+  setTitle(newValue);
+  // Reset selected suggestion when user types
+  setSelectedSuggestion(null);
+};
+
+export const onSuggestionsFetchRequested = async ({ value }, setSuggestions) => {
+  await getSuggestions(value, setSuggestions);
+};
+
+export const onSuggestionsClearRequested = (setSuggestions) => {
+  setSuggestions([]);
+};
+
+export const renderSuggestion = suggestion => (
+  <div className="suggestion-item">
+    {suggestion}
+  </div>
+);
+
+export const getSuggestionValue = suggestion => suggestion;
+
+export const getSuggestionsContainer = ({ containerProps, children }) => {
+  return (
+    <div {...containerProps} className="suggestions-container">
+      {children}
+    </div>
+  );
+};
+
+```
+</details>
+
+<hr>
 
 
