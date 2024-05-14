@@ -2,9 +2,7 @@
 
 <p>This page should cover all the steps that were taken to create the MyMovieList web application. Code snippets will be shown and explained, along with screenshots of how the database on PostgreSQL was used with different tables, analyzing how the database connects to the website in the localhost, and how users have their own lists with help of JWT.</p>
 
-<h2>Server</h2>
-
-<h3>Database</h3>
+<h2>Database</h2>
 
 <p>
 The website uses one database with three tables. The tables are called 'users', 'available_movies' and 'movies'. 
@@ -30,7 +28,8 @@ The website uses one database with three tables. The tables are called 'users', 
 <p>The last table I had to create and the most crucial to the idea of the website was the 'movies' table. This table stores the movie title selected from the 'available_movies' table, the rating the user gave to said movie, and the user_id of the user that selection belong to. This is the table that connects 'users' and 'available_movies', making everything possible.
 </p>
 
-<hr>
+
+<h2>Server</h2>
 
 <h3>index.js</h3>
 
