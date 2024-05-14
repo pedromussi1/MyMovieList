@@ -7,7 +7,7 @@
 
 <h2>Description</h2>
 
-<p>The goal of this project was to create a web application similar to MyAnimeList or Letterboxd, where user can have a profile filled with movie titles and their ratings for each title. I used datasets from Kaggle to populate a table in my database and used this database of available movies for the user to choose from and add to their respective list.</p>
+<p>The goal of this project was to create a web application similar to MyAnimeList or Letterboxd, where user can have a profile filled with movie titles and their ratings for each title. This project takes my experience from 'PernTodo' and 'JWT with PERN' and moves to a whole new level by combining their features and adding many more on top of it. I used datasets from Kaggle to populate a table in my database and used this database of available movies for the user to choose from and add to their respective list. I also added react-suggestion to create the drop-down list logic that is used on the application.</p>
 
 <h2>Languages and Utilities Used</h2>
 
@@ -29,91 +29,47 @@
 
 <h2>Project Walk-through</h2>
 
-<p>Download the files and save them on the same directory. Open the email_spam.ipynb file on a software such as Jupyter Notebook and Run All. Make sure to install in your machine all the necessary libraries. </p>
+<p>Download files, install npm and nodemon before running. Import all necessary libraries. Run 'nodemon server' inside server folder, and run 'npm start' inside client folder.</p>
 
-<p>
-1. Problem Statement:
-Email spam continues to be a significant issue, cluttering inboxes and potentially leading to security threats. The main challenge is to accurately distinguish between legitimate emails (ham) and unsolicited spam emails. Therefore, the objective is to build a machine learning model that can effectively classify emails based on their content.
-</p>
-
-<p>
-2. Data Description:
-The dataset used for this project consists of labeled email data with two classes: "spam" and "ham". Each email is represented as a text message. The dataset includes features such as the email message and its corresponding category (spam or ham).
-</p>
+<h3>Login Page</h3>
 
 <p align="center">
-  <kbd><img src="https://i.imgur.com/LJ0Xsek.png" alt="PernTodo Website"></kbd>
+  <kbd><img src="https://i.imgur.com/9p4H4wO.png?1" alt="Login"></kbd>
 </p>
 
-<p>
-3. Methodology
+<p>The login page works the same way as the one that was used for 'JWT with PERN'. The user can write their email and password credentials in order to log into the website. The user will only be able to log into an account that has already been registered on the website.</p>
 
-<p>
-3.1 Data Preprocessing:
-Missing values were handled by replacing them with empty strings.
-Text data preprocessing involved converting text to lowercase, removing punctuation, and removing stop words using NLTK (Natural Language Toolkit).
-The dataset was split into training and testing sets using a 80-20 split ratio.
-</p>
+<h3>Registering new User on the Website</h3>
 
 <p align="center">
-  <kbd><img src="https://i.imgur.com/QDnVz8S.png" alt="PernTodo Website"></kbd>
+  <kbd><img src="https://i.imgur.com/RhRDuUr.png?1" alt="DeletingItem"></kbd>
 </p>
+
+<p>The user here can register a new account on the website by providing email, password and username credentials. After registering, the user will access their dashboard that displays their username.</p>
+
+<h3>Adding movie title</h3>
 
 <p align="center">
-  <kbd><img src="https://i.imgur.com/QjxdlXX.png" alt="PernTodo Website"></kbd>
+  <kbd><img src="https://i.imgur.com/0n9B35x.png" alt="AddingMovie"></kbd>
 </p>
+
+<p>After logging in the user will see this page, where they can add movie titles to their list and give a rating to each one.</p>
 
 <p align="center">
-  <kbd><img src="https://i.imgur.com/0uyWOD8.png" alt="PernTodo Website"></kbd>
+  <kbd><img src="https://i.imgur.com/NpJRsFX.gif" alt="DeletingItem" width="1000"></kbd>
 </p>
 
+<p>By typing the title of a movie in the input field, a drop-down list of movies will be shown. The user can select of the the shown titles, type a rating, and add the movie to the list. If a movie is not selected from the drop-down, the user cannot add it to the list.</p>
+<p>The 'Edit' button provides a chance for the user to changetheir rating for a movie they have previously added to the list. After pressing 'Save' the rating will be updated. THe user can also press 'Delete' if they want to remove an item from the list.</p>
 
-<p>
-3.2 Model Training:
-Text data was transformed into numerical features using TF-IDF (Term Frequency-Inverse Document Frequency) vectorization.
-A logistic regression model was chosen for its simplicity and effectiveness in text classification tasks.
-The model was trained using the training data, consisting of the TF-IDF transformed features and corresponding target labels.
-</p>
+<h3>Different Users</h3>
 
 <p align="center">
-  <kbd><img src="https://i.imgur.com/rSJOWc7.png" alt="PernTodo Website"></kbd>
+  <kbd><img src="https://i.imgur.com/7lvQk5H.png" alt="AddingMovie"></kbd>
 </p>
+
+<p>In case you decide to have two different accounts, you will notice that they do not share the same list. Each user has their own list and all the rules of the list such as no two entries can have the same name are applicable for each user account.</p>
 
 <p align="center">
-  <kbd><img src="https://i.imgur.com/xdaWcPy.png" alt="PernTodo Website"></kbd>
-</p>
-
-<p>
-3.3 Model Evaluation:
-The trained model's performance was evaluated using various evaluation metrics, including accuracy, precision, recall, and F1-score.
-Additionally, a confusion matrix was plotted using seaborn to visualize the model's performance in terms of true positives, false positives, true negatives, and false negatives.
-</p>
-
-<p align="center">
-  <kbd><img src="https://i.imgur.com/9rn3zcn.png" alt="PernTodo Website"></kbd>
-</p>
-
-
-<p>
-4. Results:
-The logistic regression model achieved an accuracy of X% on the training data and Y% on the test data.
-The classification report provided insights into the model's performance across different classes, including precision, recall, and F1-score.
-The confusion matrix visualization helped to identify the model's strengths and weaknesses in classifying spam and ham emails.
-</p>
-
-<p align="center">
-  <kbd><img src="https://i.imgur.com/oAWuB5S.png" alt="PernTodo Website"></kbd>
-</p>
-
-<p>
-5. Future Considerations:
-Hyperparameter tuning: Experiment with different hyperparameters of the logistic regression model to improve its performance further.
-Feature engineering: Explore additional text preprocessing techniques and feature extraction methods to enhance the model's understanding of the email content.
-Model deployment: Deploy the trained model as a service to classify emails in real-time and integrate it into existing email systems for practical use.
-Continuous monitoring: Implement monitoring mechanisms to track the model's performance over time and adapt to changes in email patterns and spam tactics.
-</p>
-
-<p>
-6. Conclusion:
-In conclusion, the email classification system developed in this project demonstrates the effectiveness of machine learning in automating the classification of spam and ham emails. By preprocessing the text data, training a logistic regression model, and evaluating its performance using various metrics, we have created a reliable system for email classification. Further improvements and future considerations will continue to enhance the system's accuracy and usability in managing email communication.
+  <kbd><img src="https://i.imgur.com/emqUmc0.png" alt="AddingMovie"></kbd>
 </p>
