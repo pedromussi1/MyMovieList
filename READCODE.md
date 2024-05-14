@@ -30,6 +30,8 @@ The website uses one database with three tables. The tables are called 'users', 
 <p>The last table I had to create and the most crucial to the idea of the website was the 'movies' table. This table stores the movie title selected from the 'available_movies' table, the rating the user gave to said movie, and the user_id of the user that selection belong to. This is the table that connects 'users' and 'available_movies', making everything possible.
 </p>
 
+<hr>
+
 <h3>index.js</h3>
 
 <p>
