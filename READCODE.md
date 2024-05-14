@@ -63,17 +63,37 @@ This React component, Dashboard, serves as the user interface for authenticated 
 <h3>Movie.js</h3>
 
 <p>
-The Movie component is a crucial part of the user interface in the MyMovieList application, responsible for managing the user's movie list. It leverages React's functional components and hooks to efficiently handle state management and side effects. Upon initialization, the component initializes several state variables using the useState hook, including movies, title, rating, editId, newMovieRating, suggestions, and selectedSuggestion. These variables manage the list of movies, the title and rating of a new movie being added, the ID of the movie being edited, the rating of a new movie, suggestions for movie titles based on user input, and the selected suggestion respectively.
+The Movie component in React provides an interface for managing a user's movie list, offering functionalities to view, add, edit, and delete movies. It uses state hooks to manage data such as the list of movies, input fields for titles and ratings, and suggestions for movie titles. When the component mounts, it fetches the user's movies from the backend. The component allows users to edit movie ratings directly within the list and save the changes, or delete movies entirely. Additionally, it features an Autosuggest input for adding new movies, which helps users find and select movie titles easily. This component integrates several helper functions to handle suggestions and star ratings, creating an efficient and user-friendly experience for managing movie collections.
+</p>
 
-To populate the movies state with the user's movie list, the component utilizes the useEffect hook, which runs once when the component mounts. Inside this hook, the getMovies function is called, which sends a GET request to the backend server to retrieve the user's movies. Upon receiving the response, the movie data is parsed and stored in the movies state.
+<h3>AddMovie.js</h3>
 
-For adding new movies, the component provides an interface with an autosuggest input field for the movie title and a separate input field for the movie rating. The autosuggest feature is implemented using the react-autosuggest library, allowing users to efficiently search for movie titles as they type. Suggestions for movie titles are fetched from the backend server using the getSuggestions function, which sends a GET request with the user's input as the query parameter. The suggestions are then displayed in a dropdown menu below the input field.
+<p>
+The addMovie function is an asynchronous utility for adding a new movie to a user's movie list in a React application. It ensures that there are no duplicate movie titles (case-insensitive) in the list before proceeding. If a duplicate is found, it displays an error message using react-toastify. The function sends a POST request to the server with the new movie's title and rating, using the token stored in localStorage for authentication. Upon successful addition, it updates the movies state with the newly added movie, resets the input fields, clears the selected suggestion, and shows a success message. This function encapsulates the logic for adding a movie, maintaining clean and organized code within the Movie component.
+</p>
 
-Once the user selects a movie title from the suggestions or finishes typing the title, it is stored in the title state variable. Similarly, the user-entered or selected rating is stored in the newMovieRating state variable. When the user clicks the "Add Movie" button, the addMovie function is called, which sends a POST request to the backend server to add the new movie to the user's list. Before adding the movie, the function checks for duplicate titles in the existing movie list to prevent redundancy.
+<h3>DeleteMovie.js</h3>
 
-For editing movies, each movie in the list is rendered with options to edit and delete. Clicking the "Edit" button allows the user to modify the movie's rating. When the user clicks the "Save" button after editing, the editMovie function is called, which sends a PUT request to the backend server to update the movie's rating. The function also performs validation to ensure that the rating is within the valid range of 1 to 5.
+<p>
+The deleteMovie function is an asynchronous utility designed to remove a movie from a user's list in a React application. It sends a DELETE request to the server, identifying the movie by its ID, and uses the token from localStorage for authentication. Upon successful deletion, it updates the local state by filtering out the deleted movie from the current list and displays a success message using react-toastify. This function helps keep the main component code clean and focused by encapsulating the deletion logic.
+</p>
 
-Lastly, for deleting movies, clicking the "Delete" button triggers the deleteMovie function, which sends a DELETE request to the backend server to remove the movie from the user's list. Upon successful deletion, the movie is removed from the UI, providing immediate feedback to the user. Throughout the component, error handling is implemented to catch and log any errors that occur during API requests, ensuring robustness and reliability in the user experience.
+<h3>EditMovie.js</h3>
+
+<p>
+The editMovie function is an asynchronous utility responsible for updating the rating of a movie in a user's list within a React application. It ensures that the provided rating falls within the range of 1 to 5; otherwise, it displays an error message using react-toastify. Upon validation, the function constructs a request body with the new rating and sends a PUT request to the server, identifying the movie by its ID. It updates the local state with the modified movie rating upon successful completion, clears the current edit ID, and displays a success message. By encapsulating the edit logic, this function contributes to maintaining a clear and concise structure within the main component.
+</p>
+
+<h3>renderStars.js</h3>
+
+<p>
+The renderStars function is a simple utility designed to render star ratings based on a numeric rating value within a React application. It takes a rating parameter, representing the number of filled stars, and returns a JSX element containing filled and empty star characters. The number of filled stars corresponds to the rating value, while the remaining stars are represented as empty. This function provides a visual representation of ratings in the form of stars, enhancing the user experience when displaying movie ratings or similar data.
+</p>
+
+<h3>suggestions.js</h3>
+
+<p>
+The suggestions.js file encompasses a collection of utility functions tailored for managing movie title suggestions within a React application. These functions facilitate communication with the backend API to retrieve and present suggestions based on user input. getSuggestions orchestrates the asynchronous fetching of movie title suggestions, limiting the results to the first 5, and updating the suggestions state accordingly. onChange updates the title state with the new input value and resets the selected suggestion as the user types. onSuggestionsFetchRequested triggers the retrieval of suggestions when the input value changes, while onSuggestionsClearRequested handles clearing suggestions when the input field is emptied. The renderSuggestion function defines the appearance of individual suggestions in the dropdown, while getSuggestionValue ensures the correct value is used when a suggestion is selected. Finally, getSuggestionsContainer manages the layout and styling of the suggestions container for a cohesive user interface. Collectively, these utility functions contribute to an intuitive and efficient mechanism for suggesting movie titles as users interact with the input field.
 </p>
 
 <hr>
