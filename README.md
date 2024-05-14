@@ -26,6 +26,9 @@
   <li><b>Visual Studio Code</b></li>
 </ul>
 
+<h2>
+<a href="https://github.com/pedromussi1/MyMovieList/blob/main/READCODE.md">Code Breakdown Here!</a>
+</h2>
 
 <h2>Project Walk-through</h2>
 
