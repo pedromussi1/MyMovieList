@@ -11,20 +11,20 @@ The website uses one database with three tables. The tables are called 'users', 
 </p>
 
 <p align="center">
-  <kbd><img src="https://i.imgur.com/im6rlKP.png" alt="AddingItem"></kbd>
+  <kbd><img src="https://i.imgur.com/im6rlKP.png" alt="AddingItem" width="800px"></kbd>
 </p>
 
 <p>The role of the 'users' table is to store the account of users of the website, saving their unique passwords while encrypting them inside the database, along with their user_id. The information that is stored unchanged are 'user_name' and 'user_email', which are used for logging in and registering. This step is essential for the functionality of the website as each user must have their own movie list, and may only access their own MyMovieList account.</p>
 
 <p align="center">
-  <kbd><img src="https://i.imgur.com/j0UWyIB.png" alt="AddingItem" width="800px"></kbd>
+  <kbd><img src="https://i.imgur.com/j0UWyIB.png" alt="AddingItem" width="400px"></kbd>
 </p>
 
 <p>The role of the 'available_movies' table is to have all the possible movies the user can add to their movie list. I had the idea to find movie title datasets in Kaggle and populate the available_movies table with all those titles because I needed a way to impede users from adding just anything to the list. The only thing users should be allowed to add to their lists are existing movies. I knew I could not populate the whole table manually seeing that the dataset had more than 24,000 entries, so I used the command "COPY available_movies (title) FROM '/path/to/movies.csv' DELIMITER ',' CSV;" to copy all the tuples from the dataset to available_movies.
 </p>
 
 <p align="center">
-  <kbd><img src="https://i.imgur.com/c76cdwa.png" alt="AddingItem"></kbd>
+  <kbd><img src="https://i.imgur.com/c76cdwa.png" alt="AddingItem" width="600px"></kbd>
 </p>
 
 <p>The last table I had to create and the most crucial to the idea of the website was the 'movies' table. This table stores the movie title selected from the 'available_movies' table, the rating the user gave to said movie, and the user_id of the user that selection belong to. This is the table that connects 'users' and 'available_movies', making everything possible.
